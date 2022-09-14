@@ -2,13 +2,6 @@ const Sauce = require('../models/sauce');
 const fs = require('fs');
 
 
-exports.getAllSauces = (req, res, next) => {
-    Sauce.find()
-    .then(sauce => res.status(200).json(sauce))
-    .catch(error => res.status(400).json({ error }));
-  };
-
-
 exports.addSauce = (req, res, next) => {
     req.body.sauce = JSON.parse(req.body.sauce);
     const url = req.protocol + '://' + req.get('host');
@@ -100,12 +93,12 @@ exports.getOneSauce = (req, res, next) => {
     );
   }
   
-  exports.deleteThing = (req, res, next) => {
-    Thing.findOne({_id: req.params.id}).then(
-      (thing) => {
-        const filename = thing.imageUrl.split('/images/')[1];
+  exports.deleteSauce = (req, res, next) => {
+    Sauce.findOne({_id: req.params.id}).then(
+      (sauce) => {
+        const filename = sauce.imageUrl.split('/images/')[1];
         fs.unlink('images/' + filename, () => {
-          Thing.deleteOne({_id: req.params.id}).then(
+          sauce.deleteOne({_id: req.params.id}).then(
             () => {
               res.status(200).json({
                 message: 'Deleted!'
@@ -123,10 +116,10 @@ exports.getOneSauce = (req, res, next) => {
     );
   };
 
-  exports.getAllThings = (req, res, next) => {
-    Thing.find().then(
-      (things) => {
-        res.status(200).json(things);
+  exports.getAllSauces = (req, res, next) => {
+    Sauce.find().then(
+      (sauces) => {
+        res.status(200).json(sauces);
       }
     ).catch(
       (error) => {
@@ -136,3 +129,4 @@ exports.getOneSauce = (req, res, next) => {
       }
     );
   }
+
