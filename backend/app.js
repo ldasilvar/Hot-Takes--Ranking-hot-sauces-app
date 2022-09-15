@@ -8,6 +8,8 @@ const sauceRoutes = require('./routes/sauce');
 const usersRoutes = require('./routes/users');
 const path = require('path');
 
+const rateLimit = require("./middleware/limit");
+
 const app = express();
 
 mongoose.connect('mongodb+srv://ldasilva:H758cCT5ZwVm3ZiQ@cluster0.fkx6iiz.mongodb.net/?retryWrites=true&w=majority')
@@ -20,7 +22,7 @@ mongoose.connect('mongodb+srv://ldasilva:H758cCT5ZwVm3ZiQ@cluster0.fkx6iiz.mongo
   console.error(error);
 })
 
-
+app.use(rateLimit);
 
 app.use (express.json());
 
