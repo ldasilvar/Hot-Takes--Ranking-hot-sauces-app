@@ -12,9 +12,12 @@ const normalizePort = val => {
   }
   return false;
 };
+
+//Sets port to localhost 3000
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+//Error handler in case errors arise using that port
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;

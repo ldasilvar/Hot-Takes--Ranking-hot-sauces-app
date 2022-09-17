@@ -2,7 +2,7 @@ const passwordValidator = require("password-validator")
 
 const passwordSchema = new passwordValidator();
 
-
+//PasswordSchema for users setting the attributes passwords must meet
 passwordSchema
 .is().min(8)                   
 .has().uppercase()              

@@ -1,7 +1,7 @@
 const Sauce = require('../models/sauce');
 const fs = require('fs');
 
-
+//Post request to add sauces
 exports.addSauce = (req, res, next) => {
     req.body.sauce = JSON.parse(req.body.sauce);
     const url = req.protocol + '://' + req.get('host');
@@ -13,6 +13,8 @@ exports.addSauce = (req, res, next) => {
       mainPepper: req.body.sauce.mainPepper,
       imageUrl:url + '/images/' + req.file.filename, 
       heat: req.body.sauce.heat,
+      likes: 0,
+      dislikes: 0,
       });
     sauce.save().then(
       () => {
@@ -29,6 +31,7 @@ exports.addSauce = (req, res, next) => {
     );
   };
 
+//Get request when a user clicks on a single sauce 
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id})
     .then(
@@ -43,6 +46,8 @@ exports.getOneSauce = (req, res, next) => {
       }
     );
   }
+
+  //Put request for correct user to be able to modify only their owen sauce
   exports.modifySauce = (req, res, next) => {
     let sauce = new Sauce({ _id: req.params.id });
     if (req.file) {
@@ -85,29 +90,30 @@ exports.getOneSauce = (req, res, next) => {
           );
         }
     
-
-        exports.likeSauce = (req, res, next) => {
-          const vote = req.body.like;
+//Post request for when users like a sauce 
+exports.likeSauce = (req, res, next) => {
+      const vote = req.body.like;
           switch(vote){
-                //l'utilisateur aime : on ajoute son id au tableau et on incrémente les likes
+                //If a user clicks like on a sauce, we add the user's id to the table and increment the likes
                 case 1 :
                     Sauce.updateOne({_id : req.params.id}, {$inc : {likes : +1 },
+                      
                     $push : { usersLiked : req.body.userId}
                   })
-                      .then(() => res.status(201).json({message : "J'aime ajouté"}))
+                      .then(() => res.status(201).json({message : "I like this sauce vote added"}))
                       .catch(error => res.status(500).json({error}))       
                 break;
       
-                //l'utilisateur n'aime pas : on ajoute son id au tableau et on incrémente les likes
+                //If a user clicks on the dislike button on a sauce, we add the user's id to the table and increment the dislikes
                 case -1 :
                   Sauce.updateOne({_id : req.params.id}, {
                     $push : { usersDisliked : req.body.userId}, $inc : {dislikes : +1 }
                   })
-                      .then(() => res.status(201).json({message : "je n'aime pas ajouté"}))
+                      .then(() => res.status(201).json({message : "I don't like this sauce vote added"}))
                       .catch(error => res.status(500).json({ error }))
                 break;
       
-                //l'utilisateur annule son choix : on retire l'utilisateur du tableau et on désincrémente les likes ou dislikes suivant le tableau dans lequel il se trouvait
+                // If the user cancels his choice: the user is removed from the table and the likes or dislikes are decremented according to the table in which he was
                 case 0 :  
                   Sauce.findOne({_id : req.params.id})
                       .then(sauce => {
@@ -115,14 +121,14 @@ exports.getOneSauce = (req, res, next) => {
                             Sauce.updateOne({_id : req.params.id}, {
                               $pull : { usersLiked : req.body.userId}, $inc : {likes : -1 }
                             })
-                              .then(() => res.status(201).json({message : "j'aime a été retiré !"}))
+                              .then(() => res.status(201).json({message : "I like this sauce vote removed"}))
                               .catch(error => res.status(500).json({error}))
                           }
                           else{
                             Sauce.updateOne({_id : req.params.id}, {
                               $pull : { usersDisliked : req.body.userId}, $inc : {dislikes : -1 }
                             })
-                              .then(() => res.status(201).json({message : "je n'aime pas été retiré !"}))
+                              .then(() => res.status(201).json({message : "I dislike this sauce vote removed"}))
                               .catch(error => res.status(500).json({ error }))
                           }
       
@@ -134,7 +140,7 @@ exports.getOneSauce = (req, res, next) => {
             }
           
       }
-  
+  //Delete request for when users click to delete a sauce, it also deletes the sauce image locally
   exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id}).then(
       (sauce) => {
@@ -157,6 +163,7 @@ exports.getOneSauce = (req, res, next) => {
       }
     );
   }
+  //Get request to display all sauces
   exports.getAllSauces = (req, res, next) => {
     Sauce.find().then(
       (sauces) => {

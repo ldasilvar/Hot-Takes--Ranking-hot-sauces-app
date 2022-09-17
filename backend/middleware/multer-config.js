@@ -1,11 +1,13 @@
 const multer = require('multer');
 
+//Sets types for potential images
 const MIME_TYPES = {
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',
   'image/png': 'png'
 };
 
+//Multer used to store images when uploaded
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images');
