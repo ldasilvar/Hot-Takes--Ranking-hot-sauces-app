@@ -7,11 +7,11 @@ The app has full CRUD for both the sauces and the user profiles!
 The app’s front end has been developed using Angular and has been precompiled after internal testing.
 Data stored securely using NoSQL MongoDb database. 
 
-#Development server
+# Development server
 
 Run ng serve for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
-#Backend
+# Backend
 
 Run nodemon server and it should automatically connect to MongoDb database. 
 
